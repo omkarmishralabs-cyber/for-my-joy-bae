@@ -2,11 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>For My Love ♡</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    /* Prevent pull-to-refresh on mobile */
+    body { overscroll-behavior-y: contain; }
+    
     @keyframes float-up {
       0% { transform: translateY(0) scale(1); opacity: 1; }
       100% { transform: translateY(-100vh) scale(0.5); opacity: 0; }
@@ -106,7 +109,7 @@
       // ========== FINAL GAME QUESTIONS ==========
       gameQuestions: [
         {
-          id: 1, // Array Index 0
+          id: 1, 
           type: "choice",
           question: "What do you need the most right now? 🥺",
           options: [
@@ -116,34 +119,34 @@
           ]
         },
         {
-          id: 2, // Array Index 1
+          id: 2, 
           type: "yesno",
-          question: "Do you miss me as much as I do? ", 
+          question: "Do you miss me as much as I do? 🥺", 
           yesNext: 2, 
-          yesReward: "miss_you_more", // This triggers the playful "Impossible!" message on YES
-          noResponse: "Liar! I know you miss me! ", // This triggers error on NO
+          yesReward: "miss_you_more", 
+          noResponse: "Liar! I know you miss me! 😤", 
           noStaysHere: true
         },
         {
-          id: 3, // Array Index 2
+          id: 3, 
           type: "choice",
-          question: "If I was there right now, what would we do? ",
+          question: "If I was there right now, what would we do? 🤔",
           options: [
-            { text: "Cuddle & Sleep 😴😘😚", reward: "sleep", next: 3 }, 
+            { text: "Cuddle & Sleep 😴", reward: "sleep", next: 3 }, 
             { text: "Date Night 🕯️", reward: "date", next: 3 },
             { text: "Watch K-Dramas 🎬", reward: "kdrama", next: 3 }
           ]
         },
         {
-          id: 4, // Array Index 3
+          id: 4, 
           type: "yesno",
-          question: "Do you promise to love me even when I'm annoying and boring? ",
+          question: "Do you promise to love me even when I'm annoying and boring? 🥺",
           yesNext: 4, 
-          noResponse: "You signed a contract! You have to love me bae! 📜",
+          noResponse: "You signed a contract! You have to love me! 📜",
           noStaysHere: true
         },
         {
-          id: 5, // Array Index 4
+          id: 5, 
           type: "runaway",
           question: "Will you be my Valentine Forever? 🌹",
           yesNext: 'end'
@@ -152,7 +155,7 @@
       
       endMessage: {
         title: "Yayyy! 💕",
-        message: "I knew you'd say yes! (I didn't give you a choice hehe). I love you so much my baeeeee 😘😘😘"
+        message: "I knew you'd say yes! (I didn't give you a choice hehe). I love you so much! 🥰"
       }
     };
 
@@ -171,6 +174,27 @@
       heartInterval: null,
       timeInterval: null
     };
+
+    // Initialize History
+    window.history.replaceState({ page: 'welcome' }, '', '#welcome');
+
+    // Handle Phone Back Button
+    window.addEventListener('popstate', (event) => {
+      if (event.state && event.state.page) {
+        state.currentPage = event.state.page;
+        // Reset sub-states when going back
+        state.unlockedLetter = null;
+        state.showSecret = false;
+        state.activeModal = null;
+        state.activeReward = null;
+        
+        // Handle heart animation based on page
+        if (state.currentPage === 'home') startHeartAnimation();
+        else stopHeartAnimation();
+        
+        render();
+      }
+    });
 
     // Time calculation
     function calculateTime() {
@@ -223,7 +247,7 @@
       }
     }
 
-    // Navigation
+    // Navigation - MODIFIED FOR HISTORY
     function goToPage(page) {
       state.currentPage = page;
       state.unlockedLetter = null;
@@ -235,6 +259,9 @@
       
       if (page === 'home') startHeartAnimation();
       else stopHeartAnimation();
+      
+      // Push new state to history
+      window.history.pushState({ page: page }, '', `#${page}`);
       
       render();
     }
@@ -266,7 +293,7 @@
       if (current.type === 'yesno' || current.type === 'runaway') {
         if (answer === 'yes') {
           nextStep = current.yesNext;
-          if (current.yesReward) reward = current.yesReward; // Check for special Yes Reward
+          if (current.yesReward) reward = current.yesReward; 
         } else {
           errorMsg = current.noResponse;
         }
@@ -276,20 +303,19 @@
         reward = opt.reward;
       }
 
-      // Handle Errors (Like clicking No)
+      // Handle Errors
       if (errorMsg) {
         state.activeModal = errorMsg;
         render();
         return;
       }
 
-      // Handle Rewards (Popups)
+      // Handle Rewards
       if (reward) {
         state.activeReward = reward;
         state.pendingStep = nextStep; 
         render();
         
-        // Auto advance after 2 seconds
         setTimeout(() => {
           dismissReward();
         }, 2000);
@@ -359,7 +385,6 @@
       } else if (state.activeReward === 'kdrama') { 
         content = `<div class="text-9xl animate-bounce">🎬</div><div class="text-2xl font-bold text-white mt-4">Binge Watch Time!</div>`;
       } else if (state.activeReward === 'miss_you_more') { 
-        // THE NEW LOGIC YOU ASKED FOR
         content = `<div class="text-9xl animate-bounce">😜</div><div class="text-2xl font-bold text-white mt-4">Impossible! I miss you more!</div>`;
       }
 
@@ -430,20 +455,20 @@
 
     function renderLetters() {
       if (!state.unlockedLetter) {
-        return `<button onclick="goToPage('home')" class="text-gray-600 flex items-center gap-2 mb-4">← Back</button><h2 class="text-3xl font-bold text-gray-800 mb-6">Open When...</h2><div class="space-y-4">${config.letters.map(letter => `<button onclick="openLetter(${letter.id})" class="w-full bg-white rounded-2xl p-6 shadow-lg active:scale-95 transition-transform text-left hover:shadow-xl"><div class="flex items-center justify-between"><div class="flex items-center gap-4"><div class="bg-gradient-to-br from-rose-400 to-pink-500 p-4 rounded-xl">${icon('mail', 'w-6 h-6 text-white')}</div><div><div class="font-bold text-gray-800 text-lg">${letter.title}</div><div class="text-sm text-gray-500 flex items-center gap-1 mt-1">${icon('lock', 'w-3 h-3')} Tap to unlock</div></div></div>${icon('chevron-right', 'w-5 h-5 text-gray-400')}</div></button>`).join('')}</div>`;
+        return `<button onclick="window.history.back()" class="text-gray-600 flex items-center gap-2 mb-4">← Back</button><h2 class="text-3xl font-bold text-gray-800 mb-6">Open When...</h2><div class="space-y-4">${config.letters.map(letter => `<button onclick="openLetter(${letter.id})" class="w-full bg-white rounded-2xl p-6 shadow-lg active:scale-95 transition-transform text-left hover:shadow-xl"><div class="flex items-center justify-between"><div class="flex items-center gap-4"><div class="bg-gradient-to-br from-rose-400 to-pink-500 p-4 rounded-xl">${icon('mail', 'w-6 h-6 text-white')}</div><div><div class="font-bold text-gray-800 text-lg">${letter.title}</div><div class="text-sm text-gray-500 flex items-center gap-1 mt-1">${icon('lock', 'w-3 h-3')} Tap to unlock</div></div></div>${icon('chevron-right', 'w-5 h-5 text-gray-400')}</div></button>`).join('')}</div>`;
       } else {
         return `<button onclick="state.unlockedLetter = null; render();" class="text-gray-600 flex items-center gap-2 mb-4">← Back to letters</button><div class="relative"><div class="bg-amber-50 rounded-lg shadow-2xl p-8 relative" style="background-image: repeating-linear-gradient(0deg, transparent, transparent 31px, #f59e0b15 31px, #f59e0b15 32px);"><div class="absolute top-4 right-4 text-red-400 opacity-60">${icon('heart', 'w-8 h-8 fill-current rotate-12')}</div><div class="relative z-10"><div class="text-center mb-6"><h3 class="text-2xl font-bold text-gray-700 handwriting">${state.unlockedLetter.title}</h3></div><div class="my-8 border-t-2 border-dashed border-amber-200"></div><p class="text-lg leading-loose text-gray-700 whitespace-pre-line serif" style="text-indent: 2em;">${state.unlockedLetter.message}</p><div class="mt-8 text-right"><div class="text-gray-500 text-sm mb-1 serif">Forever yours,</div><div class="text-2xl font-bold text-red-500 handwriting flex items-center justify-end gap-2">${config.yourName} ${icon('heart', 'w-5 h-5 fill-current inline-block')}</div></div></div></div></div>`;
       }
     }
 
     function renderMemories() {
-      return `<button onclick="goToPage('home')" class="text-gray-600 flex items-center gap-2 mb-4">← Back</button><h2 class="text-3xl font-bold text-gray-800 mb-6">Our Journey ✨</h2><div class="space-y-6">${config.memories.map((memory, i) => `<div class="bg-white rounded-3xl overflow-hidden shadow-lg"><div class="h-2 bg-gradient-to-r ${memory.color}"></div><div class="p-6 space-y-3"><div class="text-sm font-semibold text-gray-500">${memory.date}</div><h3 class="text-xl font-bold text-gray-800">${memory.moment}</h3><p class="text-gray-600 italic">"${memory.feeling}"</p></div></div>`).join('')}</div><div class="bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl p-8 text-white text-center shadow-2xl mt-8">${icon('heart', 'w-12 h-12 mx-auto mb-4 fill-white')}<p class="text-lg">And so many more moments to come... 💕</p></div>`;
+      return `<button onclick="window.history.back()" class="text-gray-600 flex items-center gap-2 mb-4">← Back</button><h2 class="text-3xl font-bold text-gray-800 mb-6">Our Journey ✨</h2><div class="space-y-6">${config.memories.map((memory, i) => `<div class="bg-white rounded-3xl overflow-hidden shadow-lg"><div class="h-2 bg-gradient-to-r ${memory.color}"></div><div class="p-6 space-y-3"><div class="text-sm font-semibold text-gray-500">${memory.date}</div><h3 class="text-xl font-bold text-gray-800">${memory.moment}</h3><p class="text-gray-600 italic">"${memory.feeling}"</p></div></div>`).join('')}</div><div class="bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl p-8 text-white text-center shadow-2xl mt-8">${icon('heart', 'w-12 h-12 mx-auto mb-4 fill-white')}<p class="text-lg">And so many more moments to come... 💕</p></div>`;
     }
 
     function renderGame() {
       if (state.gameState === 'end') {
         return `
-          <button onclick="goToPage('home')" class="text-gray-600 flex items-center gap-2 mb-4">← Back</button>
+          <button onclick="window.history.back()" class="text-gray-600 flex items-center gap-2 mb-4">← Back</button>
           <div class="bg-gradient-to-br from-rose-500 via-pink-500 to-purple-500 rounded-3xl p-12 text-white text-center shadow-2xl space-y-6">
             <div class="text-6xl animate-bounce">💕</div>
             <h2 class="text-3xl font-bold">${config.endMessage.title}</h2>
@@ -480,7 +505,7 @@
       }
 
       return `
-        <button onclick="goToPage('home')" class="text-gray-600 flex items-center gap-2 mb-4">← Back</button>
+        <button onclick="window.history.back()" class="text-gray-600 flex items-center gap-2 mb-4">← Back</button>
         <div class="bg-white rounded-3xl p-8 shadow-2xl space-y-6">
           <div class="text-center space-y-4">
             <div class="text-5xl">${state.gameStep === 0 ? '💕' : state.gameStep % 2 === 0 ? '💖' : '💗'}</div>
