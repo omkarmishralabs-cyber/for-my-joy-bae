@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>For My Love ♡</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes float-up {
+      0% { transform: translateY(0) scale(1); opacity: 1; }
+      100% { transform: translateY(-100vh) scale(0.5); opacity: 0; }
+    }
+    .float-heart { animation: float-up 4s ease-out forwards; }
+    
+    @keyframes pulse-scale {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    .pulse-scale { animation: pulse-scale 2s ease-in-out infinite; }
+    
+    @keyframes sparkle-float {
+      0% { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-20px) translateX(10px) scale(1.2); opacity: 0; }
+    }
+    .sparkle-animate { animation: sparkle-float 3s ease-in-out infinite; }
+    
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+    .shake-animate { animation: shake 0.5s ease-in-out; }
+
+    @keyframes drop-in {
+      0% { transform: translateY(-100%) rotate(-10deg); opacity: 0; }
+      100% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    }
+    .modal-animate { animation: drop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+    @keyframes pop-in {
+      0% { transform: scale(0); opacity: 0; }
+      80% { transform: scale(1.1); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .reward-pop { animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+
+    .handwriting { font-family: 'Brush Script MT', cursive; }
+    .serif { font-family: Georgia, serif; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-pink-50 to-purple-50">
+  <div id="app"></div>
+
+  <script>
+    // ========== CUSTOMIZE ALL THIS ==========
+    const config = {
+      yourName: "Omkar",
+      herName: "Joy",
+      startDate: "Dec 2025",
+      
+      welcomeMessage: "Hey Bae... Made something special for you.. <br> hope you'll like it ♡",
+      
+      reasons: [
+        "Your smile that lights up my whole day",
+        "How you always know when I need you bae",
+        "Your simle is so pretty I fall in love daily bae",
+        "The way you believe in us no matter what",
+        "How you make distance feel like nothing"
+      ],
+      
+      letters: [
+        {
+          id: 1,
+          title: "When it's late at night",
+          message: "I love you bae. Everyday after call when you sleep.. I kept on imagining your cute smile.. I miss you all night bae. But you are so good you visit my dreams. never let me feel lone.. haha love you so much bae 😚😚."
+        },
+        {
+          id: 2,
+          title: "When you're feeling sick",
+          message: "I love you bae. I really hate seeing you suffering even if i can't see you in person but.. I really FEEL bad bae. Please bae take your meds. bae you're the strongest person I know... But please bae take care of yourself.. i am with you always, even if I am not with you in person yet.. i will do everything i can from here bae. Please tell me everything you feel bae I am here always 🫂."
+        },
+        {
+          id: 3,
+          title: "When you're happy",
+          message: "YESSS this is what I love to see!!! Your happiness means everything to me. I wish I could be there to see that beautiful smile in person😚. I am so proud of you bae that you are acheiving so much bae. Keep shining baby. You deserve all the good things. Love you... I love you bae... hehe.. Please keep me updated about your life bae.. always 😘"
+        },
+        {
+          id: 4,
+          title: "When I miss you",
+          message: "I miss you bae so so much... so damn much. Every single day. But you know what bae? Every day apart is one day closer to being together. I can't wait to hold you... to see you laugh in person, to just be with you.. I wanna experience your presence bae. I'll surely coome to meet you bae soon. Please bae never forget I really love you.. love you to the moon and back💕"
+        }
+      ],
+      
+      memories: [
+        { date: "The Beginning", moment: "When we first started talking", feeling: "I knew you were special from day one", color: "from-pink-500 to-rose-500" },
+        { date: "First Video Call", moment: "Seeing your face for the first time", feeling: "My heart literally was blasting bae haha.. You were looking so pretty I still remembered 😘", color: "from-purple-500 to-pink-500" },
+        { date: "That Day", moment: "We yapped around 8-9 hours straight lol bae.. still feels it was nothing", feeling: "I realized I was falling in love", color: "from-blue-500 to-purple-500" },
+        { date: "First 'I Love You'", moment: "When you said it for the first time bae", feeling: "It changed my new year bae.. this year.. now this life bae... be with me in every life bae", color: "from-rose-500 to-pink-500" }
+      ],
+      
+      secretMessage: "You're my forever person. No matter what. <br> Mahal kita po 💕",
+      
+      // ========== FINAL GAME QUESTIONS ==========
+      gameQuestions: [
+        {
+          id: 1, // Array Index 0
+          type: "choice",
+          question: "What do you need the most right now? 🥺",
+          options: [
+            { text: "A Tight Hug 🫂", reward: "hug", next: 1 }, 
+            { text: "Lots of Kisses 💋", reward: "kiss", next: 1 },
+            { text: "McDonald's 🍔🍟", reward: "food", next: 1 }
+          ]
+        },
+        {
+          id: 2, // Array Index 1
+          type: "yesno",
+          question: "Do you miss me as much as I do? 🥺", 
+          yesNext: 2, 
+          yesReward: "miss_you_more", // This triggers the playful "Impossible!" message on YES
+          noResponse: "Liar! I know you miss me! 😤", // This triggers error on NO
+          noStaysHere: true
+        },
+        {
+          id: 3, // Array Index 2
+          type: "choice",
+          question: "If I was there right now, what would we do? 🤔",
+          options: [
+            { text: "Cuddle & Sleep 😴", reward: "sleep", next: 3 }, 
+            { text: "Date Night 🕯️", reward: "date", next: 3 },
+            { text: "Watch K-Dramas 🎬", reward: "kdrama", next: 3 }
+          ]
+        },
+        {
+          id: 4, // Array Index 3
+          type: "yesno",
+          question: "Do you promise to love me even when I'm annoying and boring? 🥺",
+          yesNext: 4, 
+          noResponse: "You signed a contract! You have to love me! 📜",
+          noStaysHere: true
+        },
+        {
+          id: 5, // Array Index 4
+          type: "runaway",
+          question: "Will you be my Valentine Forever? 🌹",
+          yesNext: 'end'
+        }
+      ],
+      
+      endMessage: {
+        title: "Yayyy! 💕",
+        message: "I knew you'd say yes! (I didn't give you a choice hehe). I love you so much! 🥰"
+      }
+    };
+
+    // State
+    let state = {
+      loaded: false,
+      currentPage: 'welcome',
+      unlockedLetter: null,
+      showSecret: false,
+      timeElapsed: { days: 0, hours: 0, minutes: 0, seconds: 0 },
+      gameStep: 0,
+      activeModal: null, 
+      activeReward: null, 
+      pendingStep: null, 
+      runawayBtn: { top: 'auto', left: 'auto', position: 'static' }, 
+      heartInterval: null,
+      timeInterval: null
+    };
+
+    // Time calculation
+    function calculateTime() {
+      const startDate = new Date('2025-12-27T00:00:00');
+      const now = new Date();
+      const diffMs = now - startDate;
+      
+      const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diffMs % (1000 * 60)) / 1000);
+      
+      state.timeElapsed = { days, hours, minutes, seconds };
+      
+      if (state.currentPage === 'home') {
+        const timerEl = document.getElementById('live-timer');
+        if (timerEl) {
+          timerEl.innerHTML = `
+            <div class="flex justify-center gap-3 text-2xl font-bold">
+              <div class="flex flex-col items-center"><span class="text-4xl">${days}</span><span class="text-xs opacity-80">days</span></div>
+              <span class="text-4xl">:</span>
+              <div class="flex flex-col items-center"><span class="text-4xl">${String(hours).padStart(2, '0')}</span><span class="text-xs opacity-80">hours</span></div>
+              <span class="text-4xl">:</span>
+              <div class="flex flex-col items-center"><span class="text-4xl">${String(minutes).padStart(2, '0')}</span><span class="text-xs opacity-80">mins</span></div>
+              <span class="text-4xl">:</span>
+              <div class="flex flex-col items-center"><span class="text-4xl">${String(seconds).padStart(2, '0')}</span><span class="text-xs opacity-80">secs</span></div>
+            </div>`;
+        }
+      }
+    }
+
+    // Floating hearts
+    function startHeartAnimation() {
+      if (state.heartInterval) clearInterval(state.heartInterval);
+      state.heartInterval = setInterval(() => {
+        const heart = document.createElement('div');
+        heart.className = 'fixed text-3xl float-heart pointer-events-none z-10';
+        heart.style.left = `${Math.random() * 90 + 5}%`;
+        heart.style.bottom = '-40px';
+        heart.textContent = '❤️';
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 4000);
+      }, 1500);
+    }
+
+    function stopHeartAnimation() {
+      if (state.heartInterval) {
+        clearInterval(state.heartInterval);
+        state.heartInterval = null;
+      }
+    }
+
+    // Navigation
+    function goToPage(page) {
+      state.currentPage = page;
+      state.unlockedLetter = null;
+      state.showSecret = false;
+      state.gameStep = 0;
+      state.activeModal = null;
+      state.activeReward = null;
+      state.runawayBtn = { top: 'auto', left: 'auto', position: 'static' };
+      
+      if (page === 'home') startHeartAnimation();
+      else stopHeartAnimation();
+      
+      render();
+    }
+
+    function openLetter(letterId) {
+      const letter = config.letters.find(l => l.id === letterId);
+      state.unlockedLetter = letter;
+      render();
+    }
+
+    // ========== GAME LOGIC ==========
+    
+    function moveButton(btn) {
+      const x = Math.random() * (window.innerWidth - 200);
+      const y = Math.random() * (window.innerHeight - 100);
+      state.runawayBtn = { position: 'fixed', left: `${x}px`, top: `${y}px` };
+      render();
+    }
+
+    function handleGameAnswer(answer, optionIndex = null) {
+      const current = config.gameQuestions[state.gameStep];
+      state.activeModal = null;
+      
+      let nextStep = null;
+      let reward = null;
+      let errorMsg = null;
+
+      // Determine next step
+      if (current.type === 'yesno' || current.type === 'runaway') {
+        if (answer === 'yes') {
+          nextStep = current.yesNext;
+          if (current.yesReward) reward = current.yesReward; // Check for special Yes Reward
+        } else {
+          errorMsg = current.noResponse;
+        }
+      } else if (current.type === 'choice') {
+        const opt = current.options[optionIndex];
+        nextStep = opt.next;
+        reward = opt.reward;
+      }
+
+      // Handle Errors (Like clicking No)
+      if (errorMsg) {
+        state.activeModal = errorMsg;
+        render();
+        return;
+      }
+
+      // Handle Rewards (Popups)
+      if (reward) {
+        state.activeReward = reward;
+        state.pendingStep = nextStep; 
+        render();
+        
+        // Auto advance after 2 seconds
+        setTimeout(() => {
+          dismissReward();
+        }, 2000);
+      } else {
+        advanceGame(nextStep);
+      }
+    }
+
+    function advanceGame(nextStep) {
+      if (nextStep === 'end') {
+        state.gameState = 'end';
+      } else {
+        state.gameStep = nextStep;
+      }
+      render();
+    }
+
+    function dismissReward() {
+      if (state.activeReward) {
+        state.activeReward = null;
+        if (state.pendingStep !== null) {
+          advanceGame(state.pendingStep);
+          state.pendingStep = null;
+        } else {
+          render();
+        }
+      }
+    }
+
+    function closeModal() {
+      state.activeModal = null;
+      render();
+    }
+
+    function resetGame() {
+      state.gameStep = 0;
+      state.gameState = null;
+      state.activeReward = null;
+      render();
+    }
+
+    function toggleSecret() {
+      state.showSecret = !state.showSecret;
+      render();
+    }
+
+    function icon(name, className = '') {
+      return `<i data-lucide="${name}" class="${className}"></i>`;
+    }
+
+    // ========== RENDERERS ==========
+
+    function renderReward() {
+      if (!state.activeReward) return '';
+      
+      let content = '';
+      if (state.activeReward === 'hug') {
+        content = `<div class="text-9xl animate-bounce">🫂</div><div class="text-2xl font-bold text-white mt-4">Sending a BIG Hug!</div>`;
+      } else if (state.activeReward === 'kiss') {
+        content = `<div class="text-9xl animate-bounce">💋</div><div class="text-2xl font-bold text-white mt-4">Muah! Muah! Muah!</div>`;
+      } else if (state.activeReward === 'food') {
+        content = `<div class="text-9xl animate-bounce">🍔🍟</div><div class="text-2xl font-bold text-white mt-4">Sending McDonald's!</div>`;
+      } else if (state.activeReward === 'sleep') {
+        content = `<div class="text-9xl animate-bounce">😴</div><div class="text-2xl font-bold text-white mt-4">Sweet Dreams Baby</div>`;
+      } else if (state.activeReward === 'date') {
+        content = `<div class="text-9xl animate-bounce">🕯️</div><div class="text-2xl font-bold text-white mt-4">Get ready at 8!</div>`;
+      } else if (state.activeReward === 'kdrama') { 
+        content = `<div class="text-9xl animate-bounce">🎬</div><div class="text-2xl font-bold text-white mt-4">Binge Watch Time!</div>`;
+      } else if (state.activeReward === 'miss_you_more') { 
+        // THE NEW LOGIC YOU ASKED FOR
+        content = `<div class="text-9xl animate-bounce">😜</div><div class="text-2xl font-bold text-white mt-4">Impossible! I miss you more!</div>`;
+      }
+
+      return `
+        <div onclick="dismissReward()" class="fixed inset-0 bg-black/80 z-[60] flex items-center justify-center backdrop-blur-sm cursor-pointer">
+          <div class="text-center reward-pop">
+            ${content}
+            <div class="text-sm text-white/50 mt-8">(Tap to close)</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderModal() {
+      if (!state.activeModal) return '';
+      return `
+        <div class="fixed inset-0 bg-black/50 z-[70] flex items-center justify-center p-4 backdrop-blur-sm">
+          <div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl modal-animate border-4 border-rose-200">
+            <div class="text-5xl mb-4">🚫</div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Oops!</h3>
+            <p class="text-gray-600 mb-6">${state.activeModal}</p>
+            <button onclick="closeModal()" class="bg-rose-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-rose-600 active:scale-95 transition-transform w-full">Okay, I'll try again 😔</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderWelcome() {
+      return `
+        <div class="min-h-screen bg-gradient-to-br from-rose-400 via-pink-400 to-purple-400 flex items-center justify-center p-6 relative overflow-hidden">
+          <div class="absolute inset-0" id="sparkles-container"></div>
+          <div class="text-center space-y-8 transition-all duration-1000 ${state.loaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}">
+            <div class="relative"><div class="text-white w-24 h-24 mx-auto pulse-scale">${icon('heart', 'w-24 h-24 fill-white stroke-white')}</div></div>
+            <h1 class="text-4xl font-bold text-white leading-tight px-4">${config.welcomeMessage}</h1>
+            <button onclick="goToPage('home')" class="bg-white text-pink-500 px-8 py-4 rounded-full font-bold text-lg shadow-2xl hover:scale-105 active:scale-95 transition-transform">Open it ♡</button>
+          </div>
+        </div>`;
+    }
+
+    function renderHome() {
+      return `
+        <div class="bg-gradient-to-br from-rose-500 to-pink-500 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
+          <div class="absolute top-0 right-0 opacity-10">${icon('heart', 'w-32 h-32 fill-white')}</div>
+          <div class="relative z-10 space-y-4">
+            <h2 class="text-3xl font-bold">You & Me</h2>
+            <p class="text-lg opacity-90">Together since ${config.startDate}</p>
+            <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-6 mt-4">
+              <div class="text-center space-y-2">
+                <div class="text-sm opacity-80 font-medium">Time Together ⏱️</div>
+                <div id="live-timer"><div class="flex justify-center gap-3 text-2xl font-bold">Loading...</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-3xl p-6 shadow-lg">
+          <div class="flex items-center gap-3 mb-4"><div class="bg-gradient-to-br from-yellow-400 to-orange-400 p-3 rounded-2xl">${icon('star', 'w-6 h-6 text-white fill-white')}</div><h3 class="text-xl font-bold text-gray-800">Why I Love You Today</h3></div>
+          <p class="text-lg text-gray-700 leading-relaxed">${config.reasons[Math.floor(Math.random() * config.reasons.length)]}</p>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <button onclick="goToPage('letters')" class="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl p-6 text-white shadow-lg active:scale-95 transition-transform">${icon('message-circle', 'w-8 h-8 mx-auto mb-2')}<div class="font-bold">Love Letters</div><div class="text-sm opacity-80 mt-1">${config.letters.length} waiting</div></button>
+          <button onclick="goToPage('memories')" class="bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl p-6 text-white shadow-lg active:scale-95 transition-transform">${icon('camera', 'w-8 h-8 mx-auto mb-2')}<div class="font-bold">Our Story</div><div class="text-sm opacity-80 mt-1">${config.memories.length} moments</div></button>
+        </div>
+        <button onclick="goToPage('game')" class="w-full bg-gradient-to-r from-pink-500 via-rose-500 to-red-500 rounded-2xl p-6 text-white shadow-lg active:scale-95 transition-transform relative overflow-hidden"><div class="absolute inset-0 bg-white/20 animate-pulse"></div><div class="relative z-10">${icon('heart', 'w-8 h-8 mx-auto mb-2 fill-white animate-pulse')}<div class="font-bold text-lg">Play With Me 💕</div><div class="text-sm opacity-90 mt-1">I have some questions for you...</div></div></button>
+        <button onclick="toggleSecret()" class="w-full bg-gradient-to-r from-rose-400 to-pink-400 rounded-2xl p-6 text-white shadow-lg active:scale-95 transition-transform">${icon('sparkles', 'w-8 h-8 mx-auto mb-2')}<div class="font-bold">Tap for something special</div></button>
+        ${state.showSecret ? `<div class="bg-white rounded-3xl p-8 shadow-lg text-center animate-pulse"><div class="text-4xl mb-4">💕</div><p class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-pink-500">${config.secretMessage}</p></div>` : ''}
+      `;
+    }
+
+    function renderLetters() {
+      if (!state.unlockedLetter) {
+        return `<button onclick="goToPage('home')" class="text-gray-600 flex items-center gap-2 mb-4">← Back</button><h2 class="text-3xl font-bold text-gray-800 mb-6">Open When...</h2><div class="space-y-4">${config.letters.map(letter => `<button onclick="openLetter(${letter.id})" class="w-full bg-white rounded-2xl p-6 shadow-lg active:scale-95 transition-transform text-left hover:shadow-xl"><div class="flex items-center justify-between"><div class="flex items-center gap-4"><div class="bg-gradient-to-br from-rose-400 to-pink-500 p-4 rounded-xl">${icon('mail', 'w-6 h-6 text-white')}</div><div><div class="font-bold text-gray-800 text-lg">${letter.title}</div><div class="text-sm text-gray-500 flex items-center gap-1 mt-1">${icon('lock', 'w-3 h-3')} Tap to unlock</div></div></div>${icon('chevron-right', 'w-5 h-5 text-gray-400')}</div></button>`).join('')}</div>`;
+      } else {
+        return `<button onclick="state.unlockedLetter = null; render();" class="text-gray-600 flex items-center gap-2 mb-4">← Back to letters</button><div class="relative"><div class="bg-amber-50 rounded-lg shadow-2xl p-8 relative" style="background-image: repeating-linear-gradient(0deg, transparent, transparent 31px, #f59e0b15 31px, #f59e0b15 32px);"><div class="absolute top-4 right-4 text-red-400 opacity-60">${icon('heart', 'w-8 h-8 fill-current rotate-12')}</div><div class="relative z-10"><div class="text-center mb-6"><h3 class="text-2xl font-bold text-gray-700 handwriting">${state.unlockedLetter.title}</h3></div><div class="my-8 border-t-2 border-dashed border-amber-200"></div><p class="text-lg leading-loose text-gray-700 whitespace-pre-line serif" style="text-indent: 2em;">${state.unlockedLetter.message}</p><div class="mt-8 text-right"><div class="text-gray-500 text-sm mb-1 serif">Forever yours,</div><div class="text-2xl font-bold text-red-500 handwriting flex items-center justify-end gap-2">${config.yourName} ${icon('heart', 'w-5 h-5 fill-current inline-block')}</div></div></div></div></div>`;
+      }
+    }
+
+    function renderMemories() {
+      return `<button onclick="goToPage('home')" class="text-gray-600 flex items-center gap-2 mb-4">← Back</button><h2 class="text-3xl font-bold text-gray-800 mb-6">Our Journey ✨</h2><div class="space-y-6">${config.memories.map((memory, i) => `<div class="bg-white rounded-3xl overflow-hidden shadow-lg"><div class="h-2 bg-gradient-to-r ${memory.color}"></div><div class="p-6 space-y-3"><div class="text-sm font-semibold text-gray-500">${memory.date}</div><h3 class="text-xl font-bold text-gray-800">${memory.moment}</h3><p class="text-gray-600 italic">"${memory.feeling}"</p></div></div>`).join('')}</div><div class="bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl p-8 text-white text-center shadow-2xl mt-8">${icon('heart', 'w-12 h-12 mx-auto mb-4 fill-white')}<p class="text-lg">And so many more moments to come... 💕</p></div>`;
+    }
+
+    function renderGame() {
+      if (state.gameState === 'end') {
+        return `
+          <button onclick="goToPage('home')" class="text-gray-600 flex items-center gap-2 mb-4">← Back</button>
+          <div class="bg-gradient-to-br from-rose-500 via-pink-500 to-purple-500 rounded-3xl p-12 text-white text-center shadow-2xl space-y-6">
+            <div class="text-6xl animate-bounce">💕</div>
+            <h2 class="text-3xl font-bold">${config.endMessage.title}</h2>
+            <p class="text-xl leading-relaxed opacity-95">${config.endMessage.message}</p>
+            <button onclick="resetGame()" class="bg-white text-pink-500 px-6 py-3 rounded-full font-bold mt-6 hover:scale-105 active:scale-95 transition-transform">Play Again</button>
+          </div>`;
+      }
+
+      const currentQ = config.gameQuestions[state.gameStep];
+      let buttonsHtml = '';
+      
+      if (currentQ.type === 'yesno') {
+        buttonsHtml = `
+          <div class="grid grid-cols-2 gap-4 mt-8">
+            <button onclick="handleGameAnswer('yes')" class="bg-gradient-to-br from-green-400 to-emerald-500 text-white font-bold py-6 rounded-2xl text-xl hover:scale-105 active:scale-95 transition-transform shadow-lg">Yes! 💚</button>
+            <button onclick="handleGameAnswer('no')" class="bg-gradient-to-br from-red-400 to-pink-500 text-white font-bold py-6 rounded-2xl text-xl hover:scale-105 active:scale-95 transition-transform shadow-lg">No... ❌</button>
+          </div>`;
+      } else if (currentQ.type === 'runaway') {
+        buttonsHtml = `
+          <div class="grid grid-cols-2 gap-4 mt-8 relative h-32">
+            <button onclick="handleGameAnswer('yes')" class="absolute left-0 top-0 w-[45%] bg-gradient-to-br from-green-400 to-emerald-500 text-white font-bold py-6 rounded-2xl text-xl hover:scale-105 active:scale-95 transition-transform shadow-lg z-10">Yes! 💚</button>
+            <button onmouseover="moveButton(this)" onclick="moveButton(this)" style="position: ${state.runawayBtn.position}; left: ${state.runawayBtn.left}; top: ${state.runawayBtn.top}" class="w-[45%] right-0 top-0 bg-gradient-to-br from-red-400 to-pink-500 text-white font-bold py-6 rounded-2xl text-xl hover:scale-105 active:scale-95 transition-transform shadow-lg transition-all duration-300">No... ❌</button>
+          </div>`;
+      } else if (currentQ.type === 'choice') {
+        buttonsHtml = `
+          <div class="grid grid-cols-1 gap-4 mt-8">
+            ${currentQ.options.map((opt, idx) => `
+              <button onclick="handleGameAnswer(null, ${idx})" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-4 px-6 rounded-xl text-lg hover:scale-105 active:scale-95 transition-transform shadow-md text-left flex justify-between items-center">
+                <span>${opt.text}</span>
+                ${icon('chevron-right', 'w-5 h-5 opacity-50')}
+              </button>
+            `).join('')}
+          </div>`;
+      }
+
+      return `
+        <button onclick="goToPage('home')" class="text-gray-600 flex items-center gap-2 mb-4">← Back</button>
+        <div class="bg-white rounded-3xl p-8 shadow-2xl space-y-6">
+          <div class="text-center space-y-4">
+            <div class="text-5xl">${state.gameStep === 0 ? '💕' : state.gameStep % 2 === 0 ? '💖' : '💗'}</div>
+            <div class="text-sm text-gray-500">Question ${state.gameStep + 1} of ${config.gameQuestions.length}</div>
+            <h3 class="text-2xl font-bold text-gray-800">${currentQ.question}</h3>
+          </div>
+          ${buttonsHtml}
+        </div>`;
+    }
+
+    function animateSparkles() {
+      const container = document.getElementById('sparkles-container');
+      if (!container) return;
+      for (let i = 0; i < 20; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'absolute sparkle-animate';
+        sparkle.style.left = `${Math.random() * 100}%`;
+        sparkle.style.top = `${Math.random() * 100}%`;
+        sparkle.style.animationDelay = `${Math.random() * 3}s`;
+        sparkle.style.fontSize = `${Math.random() * 20 + 10}px`;
+        sparkle.textContent = '✨';
+        container.appendChild(sparkle);
+      }
+    }
+
+    function render() {
+      const app = document.getElementById('app');
+      
+      // Handle Global Overlays
+      const rewardHtml = renderReward();
+      const modalHtml = renderModal();
+      
+      if (state.currentPage === 'welcome') {
+        app.innerHTML = renderWelcome();
+        setTimeout(animateSparkles, 100);
+      } else {
+        let content = '';
+        if (state.currentPage === 'home') content = renderHome();
+        else if (state.currentPage === 'letters') content = renderLetters();
+        else if (state.currentPage === 'memories') content = renderMemories();
+        else if (state.currentPage === 'game') content = renderGame();
+        
+        app.innerHTML = `
+          ${rewardHtml}
+          ${modalHtml}
+          <div class="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 pb-20">
+            <div class="sticky top-0 bg-white/90 backdrop-blur-lg shadow-sm z-50 px-6 py-4">
+              <div class="flex items-center justify-between max-w-2xl mx-auto">
+                <div class="flex items-center gap-2">${icon('heart', 'text-rose-500 w-6 h-6 fill-rose-500')}<span class="font-bold text-gray-800">For ${config.herName}</span></div>
+                <div class="text-sm text-gray-500">From ${config.yourName} ♡</div>
+              </div>
+            </div>
+            <div class="max-w-2xl mx-auto px-6 py-8 space-y-6">${content}</div>
+          </div>`;
+      }
+      lucide.createIcons();
+    }
+
+    setTimeout(() => { state.loaded = true; render(); }, 500);
+    calculateTime();
+    state.timeInterval = setInterval(calculateTime, 1000);
+    render();
+  </script>
+</body>
+</html>
